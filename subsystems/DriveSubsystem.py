@@ -11,8 +11,6 @@ class DriveSubsystem(commands2.SubsystemBase):
         self.rearLeftChannel = 2
         self.frontRightChannel = 3
         self.rearRightChannel = 4
-        self.lStickChannel = 0
-        self.rStickChannel = 1
 
         self.frontLeftMotor = wpilib.Talon(self.frontLeftChannel)
         self.rearLeftMotor = wpilib.Talon(self.rearLeftChannel)
@@ -21,13 +19,9 @@ class DriveSubsystem(commands2.SubsystemBase):
 
 
         self.gyro = wpilib.AnalogGyro(1)
-        self.leftEncoder = wpilib.Encoder(6, 7)
-        self.rightEncoder = wpilib.Encoder(8, 9)
         
         self.gyro.initGyro()
         self.gyro.setSensitivity(self.gyro.kDefaultVoltsPerDegreePerSecond)  # calibrates gyro values to equal degrees
-        self.rightEncoder.setDistancePerPulse(constants.kEncoderDistancePerPulse)
-        self.leftEncoder.setDistancePerPulse(constants.kEncoderDistancePerPulse)
 
         self.drive = MecanumDrive(
             self.frontLeftMotor,
@@ -35,7 +29,7 @@ class DriveSubsystem(commands2.SubsystemBase):
             self.frontRightMotor,
             self.rearRightMotor,
         )
-    def MecanumDrive(self, x, y, rot) -> None:
+    def mecanumDrive(self, x, y, rot) -> None:
         """
         Drives the robot using Mecanum controls.
         """

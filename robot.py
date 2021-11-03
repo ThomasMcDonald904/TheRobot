@@ -1,18 +1,20 @@
 from colorama.ansi import Style
+import commands2
+from commands2 import button
 import wpilib
-from wpilib._wpilib import Joystick, wait
+from wpilib._wpilib import Joystick, Solenoid, wait
 from wpilib.drive import MecanumDrive
 from colorama import Fore
+import constants
 
-from Commands import defaultDrive
+from Commands.defaultDrive import DefaultDrive
+from subsystems.driveSubsystem import DriveSubsystem
 
-class MyRobot(wpilib.TimedRobot):
+class MyRobot(commands2.TimedCommandRobot):
     """Main robot class"""
  
     # The channel on the driver station that the joystick is connected to
 
-    lstick = Joystick(0)
- 
     def robotInit(self):
         """Robot initialization function"""
 
@@ -20,9 +22,16 @@ class MyRobot(wpilib.TimedRobot):
         self.lStickChannel = 0
  
         # Position gets automatically updated as robot moves
-        self.solenoid = wpilib.DoubleSolenoid(5)
+        self.leftEncoder = wpilib.Encoder(6, 7)
+        self.rightEncoder = wpilib.Encoder(8, 9)
+        
+        self.rightEncoder.setDistancePerPulse(1/40)
+        self.leftEncoder.setDistancePerPulse(1/40)
 
         self.lstick = Joystick(self.lStickChannel)
+        self.driveSubsystem = DriveSubsystem()
+        self.driveSubsystem.setDefaultCommand(DefaultDrive(self.driveSubsystem, self.lstick))
+
         
  
     def disabled(self):
@@ -32,10 +41,6 @@ class MyRobot(wpilib.TimedRobot):
  
     def autonomousInit(self):
         """Called when autonomous mode is enabled"""
-        self.encoder.setDistancePerPulse(20)
-       
-        self.timer = wpilib.Timer()
-        self.timer.start()
  
     def autonomousPeriodic(self):
        pass
@@ -44,15 +49,6 @@ class MyRobot(wpilib.TimedRobot):
  
     def teleopPeriodic(self):
         """Called when operation control mode is enabled"""
-        defaultDrive.DefaultDrive.execute(self.lstick.getX(), -self.lstick.getY(), self.lstick.getRawAxis(2))
-        # self.drive.driveCartesian(
-        #     self.lstick.getX(), -self.lstick.getY(), self.rstick.getX(), 0
-        # )
-        print(self.encoder.getDistance())
-        if(self.lstick.getTrigger() == True):
-            self.solenoid.set(True)
-        else:
-            self.solenoid.set(False)
  
  
 if __name__ == "__main__":
