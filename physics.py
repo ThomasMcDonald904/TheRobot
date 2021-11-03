@@ -28,8 +28,7 @@ class PhysicsEngine:
         self.rf_motor = wpilib.simulation.PWMSim(3)
         self.rr_motor = wpilib.simulation.PWMSim(4)
 
-        self.encoder = wpilib.simulation.EncoderSim.createForChannel(6)
-
+        self.leftEncoder = wpilib.simulation.EncoderSim.createForChannel(6)
 
         # Gyro
         self.gyro = wpilib.simulation.AnalogGyroSim(1)
@@ -58,4 +57,4 @@ class PhysicsEngine:
         # -> FRC gyros are positive clockwise, but the returned pose is positive
         #    counter-clockwise
         self.gyro.setAngle(-pose.rotation().degrees())
-        self.encoder.setCount(self.encoder.getCount() + int(lr_motor * 100))
+        self.leftEncoder.setCount(self.leftEncoder.getCount() + int(lf_motor * 100))

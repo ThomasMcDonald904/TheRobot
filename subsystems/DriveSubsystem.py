@@ -17,6 +17,8 @@ class DriveSubsystem(commands2.SubsystemBase):
         self.frontRightMotor = wpilib.Talon(self.frontRightChannel)
         self.rearRightMotor = wpilib.Talon(self.rearRightChannel)
 
+        self.leftEncoder = wpilib.Encoder(6, 7)
+        self.leftEncoder.setDistancePerPulse(1/20)
 
         self.gyro = wpilib.AnalogGyro(1)
         
@@ -29,18 +31,23 @@ class DriveSubsystem(commands2.SubsystemBase):
             self.frontRightMotor,
             self.rearRightMotor,
         )
-    def mecanumDrive(self, x, y, rot) -> None:
+    def mecanumDrive(self, x, y, rot):
         """
         Drives the robot using Mecanum controls.
         """
         self.drive.driveCartesian(x, y, rot, 0)
     
-    def resetEncoders(self) -> None:
+    def resetEncoders(self):
         """Resets the drive encoders to currently read a position of 0."""
+        self.leftEncoder.reset()
     
-    def getAverageEncoderDistance(self) -> float:
+    def resetGyro(self):
+        """Resets the gyro to currently read a position of 0."""
+        self.gyro.reset()
+
+    def getEncoderDistance(self) -> float:
         """Gets the average distance of the TWO encoders."""
-        return (self.leftEncoder.getDistance() + self.rightEncoder.getDistance()) / 2.0
+        return self.leftEncoder.getDistance()
 
     def setMaxOutput(self, maxOutput: float):
         """
