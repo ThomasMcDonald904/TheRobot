@@ -1,10 +1,10 @@
 import commands2
 # import Subsystems
-from subsystems import DriveSubsystem
+from subsystems import driveSubsystem
 
 
 class DefaultDrive(commands2.CommandBase):
-    def __init__(self, drive: DriveSubsystem) -> None:
+    def __init__(self, drive: driveSubsystem) -> None:
         super().__init__()
         self.drive = drive
 
