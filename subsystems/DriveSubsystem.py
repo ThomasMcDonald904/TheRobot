@@ -2,7 +2,6 @@ import wpilib
 import wpilib.drive
 from wpilib.drive import MecanumDrive
 import commands2
-import constants
 
 class DriveSubsystem(commands2.SubsystemBase):
     def __init__(self) -> None:
