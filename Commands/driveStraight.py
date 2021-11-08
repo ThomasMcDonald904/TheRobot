@@ -1,6 +1,6 @@
 import commands2
 
-from subsystems.driveSubsystem import DriveSubsystem
+from subsystems.DriveSubsystem import DriveSubsystem
 
 
 class DriveDistance(commands2.CommandBase):
@@ -15,10 +15,10 @@ class DriveDistance(commands2.CommandBase):
         self.drive.resetEncoders()
 
     def execute(self) -> None:
-        self.drive.mecanumDrive(0, self.speed, 0)
+        self.drive.arcadeDrive(self.speed, 0)
 
     def end(self, interrupted: bool) -> None:
-        self.drive.mecanumDrive(0, 0, 0)
+        self.drive.arcadeDrive(0, 0)
 
     def isFinished(self) -> bool:
-        return self.drive.getEncoderDistance() >= self.distance
+        return self.drive.getAverageEncoderDistance() >= self.distance

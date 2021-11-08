@@ -1,7 +1,7 @@
 import commands2
 from wpilib._wpilib import Joystick
 # import Subsystems
-from subsystems.driveSubsystem import DriveSubsystem
+from subsystems.DriveSubsystem import DriveSubsystem
 
 
 class DefaultDrive(commands2.CommandBase):
@@ -12,4 +12,4 @@ class DefaultDrive(commands2.CommandBase):
         self.addRequirements([self.drive])
 
     def execute(self) -> None:
-        self.drive.mecanumDrive(self.lstick.getX(), -self.lstick.getY(), self.lstick.getRawAxis(2))
+        self.drive.arcadeDrive(self.lstick.getX(), self.lstick.getRawAxis(2))

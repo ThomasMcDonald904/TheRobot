@@ -1,6 +1,6 @@
 import commands2
 
-from subsystems.driveSubsystem import DriveSubsystem
+from subsystems.DriveSubsystem import DriveSubsystem
 
 
 class SpecificTurn(commands2.CommandBase):
@@ -14,10 +14,10 @@ class SpecificTurn(commands2.CommandBase):
         self.drive.resetGyro()
 
     def execute(self):
-        self.drive.mecanumDrive(0, 0, 1.0)
+        self.drive.arcadeDrive(0, 1.0)
 
     def end(self, interrupted: bool):
-        self.drive.mecanumDrive(0, 0, 0.0)
+        self.drive.arcadeDrive(0, 0.0)
 
     def isFinished(self) -> bool:
-        self.drive.gyro.getAngle() >= self.angle
+        self.drive.gyro.getAngle >= self.angle

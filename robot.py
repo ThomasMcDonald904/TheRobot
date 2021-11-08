@@ -12,7 +12,7 @@ import constants
 from Commands.defaultDrive import DefaultDrive
 from Commands.driveStraight import DriveDistance
 from Commands.SpecificTurn import SpecificTurn
-from subsystems.driveSubsystem import DriveSubsystem
+from subsystems.DriveSubsystem import DriveSubsystem
 
 class MyRobot(commands2.TimedCommandRobot):
     """Main robot class"""
