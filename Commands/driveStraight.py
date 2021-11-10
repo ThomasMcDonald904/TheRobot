@@ -12,7 +12,7 @@ class DriveDistance(commands2.CommandBase):
         self.addRequirements([drive])
 
     def initialize(self) -> None:
-        self.drive.resetEncoders()
+        self.drive.resetOdometry()
 
     def execute(self) -> None:
         self.drive.arcadeDrive(self.speed, 0)

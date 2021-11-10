@@ -10,27 +10,36 @@ from wpimath.system.plant import DCMotor
 class DriveSubsystem(commands2.SubsystemBase):
     def __init__(self) -> None:
         super().__init__()
-
-        self.frontLeft = wpilib.PWMVictorSPX(1)
-        self.rearLeft = wpilib.PWMVictorSPX(2)
-        self.frontRight = wpilib.PWMVictorSPX(3)
-        self.rearRight = wpilib.PWMVictorSPX(4)
+        self.setName("Base Pilotable")
+        self.frontLeft = wpilib.Spark(1)
+        self.addChild("FrontLeftMotor", self.frontLeft)
+        self.rearLeft = wpilib.Spark(2)
+        self.addChild("RearLeftMotor", self.rearLeft)
+        self.frontRight = wpilib.Spark(3)
+        self.addChild("FrontRightMotor", self.frontRight)
+        self.rearRight = wpilib.Spark(4)
+        self.addChild("RearRightMotor", self.rearRight)
 
         # The robot's drive
         self.drive = wpilib.drive.DifferentialDrive(
             wpilib.SpeedControllerGroup(self.frontLeft, self.rearLeft),
             wpilib.SpeedControllerGroup(self.frontRight, self.rearRight),
         )
+        self.addChild("Drive", self.drive)
 
         # The left-side drive encoder
-        self.leftEncoder = wpilib.AnalogEncoder(6, 7)
-
+        self.leftEncoder = wpilib.Encoder(1, 2)
+        self.addChild("LeftEncoder", self.leftEncoder)
         # The right-side drive encoder
-        self.rightEncoder = wpilib.AnalogEncoder(8, 9)
+        self.rightEncoder = wpilib.Encoder(3, 4)
+        self.addChild("RightEncoder", self.rightEncoder)
+
         self.gyro = wpilib.ADXRS450_Gyro()
+        self.addChild("Gyro", self.gyro)
+        
         # Sets the distance per pulse for the encoders
-        self.leftEncoder.setDistancePerRotation(1/20)
-        self.rightEncoder.setDistancePerRotation(1/20)
+        self.leftEncoder.setDistancePerPulse(1/800)
+        self.rightEncoder.setDistancePerPulse(1/800)
 
         if wpilib.RobotBase.isSimulation():
             self.field = wpilib.Field2d()
@@ -38,8 +47,8 @@ class DriveSubsystem(commands2.SubsystemBase):
 
             self.odometry = DifferentialDriveOdometry(Rotation2d.fromDegrees(0.0))
             self.gyro_sim = wpilib.simulation.ADXRS450_GyroSim(self.gyro)
-            self.leftEncoder = wpilib.simulation.EncoderSim(self.leftEncoder)
-            self.rightEncoder = wpilib.simulation.EncoderSim(self.rightEncoder)
+            self.leftEncoder_sim = wpilib.simulation.EncoderSim(self.leftEncoder)
+            self.rightEncoder_sim = wpilib.simulation.EncoderSim(self.rightEncoder)
             self.drive_sim = wpilib.simulation.DifferentialDrivetrainSim(
                 DCMotor.NEO(2),  # 2 NEO motors on each side of the drivetrain
                 7.29,  # 7.29:1 gearing reduction
@@ -65,15 +74,15 @@ class DriveSubsystem(commands2.SubsystemBase):
         self.drive_sim.update(0.02)  # 20 ms, e.g. 50 updates/sec
 
         # Update sensors
-        self.leftEncoder.setDistance(self.drive_sim.getLeftPosition())
-        self.leftEncoder.setRate(self.drive_sim.getLeftVelocity())
-        self.rightEncoder.setDistance(self.drive_sim.getRightPosition())
-        self.rightEncoder.setRate(self.drive_sim.getRightVelocity())
+        self.leftEncoder_sim.setDistance(self.drive_sim.getLeftPosition())
+        self.leftEncoder_sim.setRate(self.drive_sim.getLeftVelocity())
+        self.rightEncoder_sim.setDistance(self.drive_sim.getRightPosition())
+        self.rightEncoder_sim.setRate(self.drive_sim.getRightVelocity())
         self.gyro_sim.setAngle(-1.0 * self.drive_sim.getHeading().degrees())
 
         # Update odometry
         self.odometry.update(
-            Rotation2d.fromDegrees(self.getAngle()),
+            Rotation2d.fromDegrees(self.gyro.getAngle()),
             self.leftEncoder.getDistance(),
             self.rightEncoder.getDistance(),
         )
@@ -89,6 +98,11 @@ class DriveSubsystem(commands2.SubsystemBase):
 
     def resetEncoders(self) -> None:
         """Resets the drive encoders to currently read a position of 0."""
+        self.leftEncoder.reset()
+        self.rightEncoder.reset()
+
+    def resetGyro(self) -> None:
+        self.gyro_sim.setAngle(0)
         self.gyro.reset()
 
     def getAverageEncoderDistance(self) -> float:
@@ -101,3 +115,13 @@ class DriveSubsystem(commands2.SubsystemBase):
         drive to drive more slowly.
         """
         self.drive.setMaxOutput(maxOutput)
+
+    def resetOdometry(self):  # Odometry = encoders + gyro
+        self.leftEncoder.reset()
+        self.rightEncoder.reset()
+        self.gyro.reset()
+
+        if wpilib.RobotBase.isSimulation():
+            current_pose = self.odometry.getPose()
+            self.drive_sim.setPose(Pose2d(0.0, 0.0, 0.0))
+            self.odometry.resetPosition(current_pose, Rotation2d.fromDegrees(0.0))

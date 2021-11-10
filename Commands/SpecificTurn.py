@@ -8,16 +8,16 @@ class SpecificTurn(commands2.CommandBase):
         super().__init__()
         self.angle = angle
         self.drive = drive
-        self.addRequirements([drive])
+        self.addRequirements(self.drive)
 
     def initialize(self):
-        self.drive.resetGyro()
+        self.drive.resetOdometry()
 
     def execute(self):
-        self.drive.arcadeDrive(0, 1.0)
+        self.drive.arcadeDrive(0, 0.25)
 
     def end(self, interrupted: bool):
         self.drive.arcadeDrive(0, 0.0)
 
     def isFinished(self) -> bool:
-        self.drive.gyro.getAngle >= self.angle
+        return self.drive.gyro.getAngle() >= (self.angle - 24)

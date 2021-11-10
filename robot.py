@@ -13,6 +13,7 @@ from Commands.defaultDrive import DefaultDrive
 from Commands.driveStraight import DriveDistance
 from Commands.SpecificTurn import SpecificTurn
 from subsystems.DriveSubsystem import DriveSubsystem
+from Commands.FancyAutonomous import FancyAuto
 
 class MyRobot(commands2.TimedCommandRobot):
     """Main robot class"""
@@ -33,8 +34,10 @@ class MyRobot(commands2.TimedCommandRobot):
         # wpilib._wpilib.Sendable.__init__(commands2.CommandScheduler.getInstance())
         # wpilib._wpilib.ErrorBase.__init__(commands2.CommandScheduler.getInstance())
         # wpilib._wpilib.ErrorBase
-        
-        self.auto_command = SpecificTurn(45.0, self.driveSubsystem)
+        SmartDashboard.putData("Drive Distance 10cm", DriveDistance(10, 1, self.driveSubsystem))
+        SmartDashboard.putData("SpecificTurn 90", SpecificTurn(90, self.driveSubsystem))
+        SmartDashboard.putData("SpecificTurn 180", SpecificTurn(180, self.driveSubsystem))
+        SmartDashboard.putData("Fancy Auto", FancyAuto())
         
 
         
@@ -46,15 +49,13 @@ class MyRobot(commands2.TimedCommandRobot):
  
     def autonomousInit(self):
         """Called when autonomous mode is enabled"""
-        self.auto_command.schedule()
  
     def autonomousPeriodic(self):
         pass
 
     def teleopInit(self) -> None:
-        if(self.auto_command):
-            self.auto_command.cancel()
- 
+        pass
+    
     def teleopPeriodic(self):
         """Called when operation control mode is enabled"""
  
