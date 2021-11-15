@@ -13,6 +13,7 @@ from Commands.defaultDrive import DefaultDrive
 from Commands.driveStraight import DriveDistance
 from Commands.SpecificTurn import SpecificTurn
 from subsystems.DriveSubsystem import DriveSubsystem
+from subsystems.ShooterSubsystem import ShooterSubsystem
 from Commands.FancyAutonomous import FancyAuto
 
 class MyRobot(commands2.TimedCommandRobot):
@@ -29,6 +30,7 @@ class MyRobot(commands2.TimedCommandRobot):
 
         self.lstick = Joystick(self.lStickChannel)
         self.driveSubsystem = DriveSubsystem()
+        self.shooterSubsystem = ShooterSubsystem()
         self.driveSubsystem.setDefaultCommand(DefaultDrive(self.driveSubsystem, self.lstick))
 
         # wpilib._wpilib.Sendable.__init__(commands2.CommandScheduler.getInstance())
@@ -37,7 +39,7 @@ class MyRobot(commands2.TimedCommandRobot):
         SmartDashboard.putData("Drive Distance 10cm", DriveDistance(10, 1, self.driveSubsystem))
         SmartDashboard.putData("SpecificTurn 90", SpecificTurn(90, self.driveSubsystem))
         SmartDashboard.putData("SpecificTurn 180", SpecificTurn(180, self.driveSubsystem))
-        SmartDashboard.putData("Fancy Auto", FancyAuto())
+        SmartDashboard.putData("Fancy Auto", FancyAuto(self.driveSubsystem, self.shooterSubsystem))
         
 
         

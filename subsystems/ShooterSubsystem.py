@@ -1,7 +1,7 @@
 import wpilib
 import commands2
 
-class ShooterSubsystem(commands2.CommandBase):
+class ShooterSubsystem(commands2.SubsystemBase):
     def __init__(self) -> None:
         super().__init__()
         self.setName("Shooter Base")

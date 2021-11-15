@@ -7,12 +7,13 @@ from subsystems import DriveSubsystem
 from subsystems import ShooterSubsystem
 
 class FancyAuto(commands2.SequentialCommandGroup):
-    def FancyAuto(self, driveSubsystem: DriveSubsystem, shootSub: ShooterSubsystem):
-        self.drive = driveSubsystem
-        self.shootSub = shootSub
+    def __init__(self, drive: DriveSubsystem, shoot: ShooterSubsystem): 
+        super().__init__()
 
-        #Commands In Order
-        DriveDistance(5, 1, self.drive)
-        SpecificTurn(45, self.drive)
-        commands2.WaitCommand(1)
-        Shoot(self.shootSub)
+        self.addCommands(
+            DriveDistance(5, 1, drive),
+            SpecificTurn(45, drive),
+            Shoot(shoot),
+            SpecificTurn(135, drive),
+            DriveDistance(5, 1, drive)
+        )
